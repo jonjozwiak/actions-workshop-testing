@@ -1,0 +1,11 @@
+name: External Trigger Lab
+
+on:
+  repository_dispatch:
+    types: [trigger]
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Triggered by external event!"
