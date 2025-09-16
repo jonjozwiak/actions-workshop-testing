@@ -1,0 +1,14 @@
+name: Test JS Action
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./hello-js-action
+        with:
+          name: 'World'
+          

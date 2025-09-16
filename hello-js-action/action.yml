@@ -1,0 +1,9 @@
+name: 'Hello JS Action'
+description: 'Greets the provided name'
+inputs:
+  name:
+    description: 'Name to greet'
+    required: true
+runs:
+  using: 'node20'
+  main: 'index.js'
