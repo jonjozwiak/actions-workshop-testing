@@ -1,0 +1,45 @@
+name: Reusable Build and Test 2
+
+on:
+  workflow_call:
+    inputs:
+      node_version:
+        description: 'Version of Node.js'
+        required: true
+        type: string
+      custom_message:
+        description: 'A custom message to print'
+        required: false
+        default: 'Hello from reusable workflow!'
+        type: string
+    secrets:
+      NPM_TOKEN:
+        required: false
+      API_KEY:
+        required: false
+    outputs:
+      test_result:
+        description: 'Result of tests'
+        value: ${{ jobs.build_and_test.outputs.test_result }}
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+      - run: npm ci
+      - run: echo "${{ inputs.custom_message }}"
+      - run: |
+          if [ -n "${{ secrets.NPM_TOKEN }}" ]; then
+            echo "NPM_TOKEN is set and will be used for authentication."
+          else
+            echo "NPM_TOKEN is not set."
+          fi
+      - name: Set output
+        id: result
+        run: echo "test_result=success" >> $GITHUB_OUTPUT
+    outputs:
+      test_result: ${{ steps.result.outputs.test_result }}

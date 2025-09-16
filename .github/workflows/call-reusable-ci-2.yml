@@ -1,0 +1,22 @@
+name: Call CI Reusable Workflow 2
+
+on:
+  workflow_dispatch:
+
+jobs:
+  do-build-test:
+    uses: ./.github/workflows/build-and-test.yml
+    with:
+      node_version: '18'
+      custom_message: 'This is a custom message from the caller workflow!'
+    secrets: inherit
+    # Alternatively, pass secrets one by one:
+    #secrets:
+    #  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    #  API_KEY: ${{ secrets.API_KEY }}
+
+  post-check:
+    needs: do-build-test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Test result was ${{ needs.do-build-test.outputs.test_result }}"
