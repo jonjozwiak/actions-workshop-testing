@@ -5,7 +5,7 @@ on:
 
 jobs:
   do-build-test:
-    uses: ./.github/workflows/build-and-test.yml
+    uses: ./.github/workflows/reusable-build-and-test-2.yml
     with:
       node_version: '18'
       custom_message: 'This is a custom message from the caller workflow!'
