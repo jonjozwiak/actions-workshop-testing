@@ -10,7 +10,7 @@ on:
       run_tests:
         description: 'Whether to run tests'
         required: false
-        default: 'true'
+        default: true
         type: boolean
     secrets:
       NPM_TOKEN:
@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
       - run: npm ci
-      - if: ${{ inputs.run_tests == 'true' }}
+      - if: ${{ inputs.run_tests }}
         run: npm test
       - name: Set output
         id: result
