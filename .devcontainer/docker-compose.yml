@@ -1,0 +1,18 @@
+services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/javascript-node:dev-22-bookworm
+    command: sleep infinity
+    network_mode: host
+
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+
+      - type: bind
+        source: /usr/bin/docker
+        target: /usr/bin/docker
+
+      - type: bind
+        source: /usr/local/bin/docker-compose
+        target: /usr/local/bin/docker-compose
