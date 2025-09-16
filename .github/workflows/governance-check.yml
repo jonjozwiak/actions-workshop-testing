@@ -1,0 +1,28 @@
+name: Simple Governance Check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      approve:
+        description: 'Approve this workflow run'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+        - 'false'
+        - 'true'
+
+jobs:
+  approval-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check approval
+        run: |
+          if [ "${{ github.event.inputs.approve }}" = "true" ]; then
+            echo "✅ Workflow approved via manual dispatch"
+          else
+            echo "❌ Workflow not approved - use workflow_dispatch with approve=true to pass"
+            exit 1
+          fi
