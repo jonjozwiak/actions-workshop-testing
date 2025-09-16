@@ -1,0 +1,23 @@
+name: Call CI Reusable Workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  do-build-test:
+    uses: ./.github/workflows/reusable/build-and-test.yml
+    with:
+      node_version: '18'
+      run_tests: 'true'
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  post-check:
+    needs: do-build-test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Test result was ${{ needs.do-build-test.outputs.test_result }}"
