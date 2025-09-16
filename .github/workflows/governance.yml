@@ -1,0 +1,71 @@
+name: Governance - Build, Test & Attest
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  attestations: write
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+      # Generate SBOM with CycloneDX
+      - name: Install cyclonedx-node-npm and Generate SBOM
+        run: | 
+          npm install -g @cyclonedx/cyclonedx-node-npm
+          cyclonedx-node-npm --output-format json --output-file sbom.json
+
+      # Create a build artifact (zip the dist folder)
+      - name: Create build artifact
+        run: |
+          cd dist
+          zip -r ../build-artifact.zip .
+          cd ..
+
+      # Generate artifact attestation for build provenance
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: 'build-artifact.zip'
+
+      # Generate SBOM attestation
+      - name: Generate SBOM attestation
+        uses: actions/attest-sbom@v2
+        with:
+          subject-path: 'build-artifact.zip'
+          sbom-path: 'sbom.json'
+
+      # Upload build artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: build-artifact.zip
+
+      # Upload SBOM
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.json
