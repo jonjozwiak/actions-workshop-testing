@@ -1,0 +1,14 @@
+name: 'Setup and Install'
+description: 'Checks out code, sets up Node, and installs dependencies'
+inputs:
+  node-version:
+    description: 'Node.js version'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+    - run: npm ci

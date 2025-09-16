@@ -1,0 +1,25 @@
+name: Composite CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup-and-install
+        with:
+          node-version: '20'
+      - run: npm test
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup-and-install
+        with:
+          node-version: '20'
+      - run: npm run lint
