@@ -23,7 +23,7 @@ jobs:
         run: npm ci
       - name: Run tests and save log
         run: |
-          npm test | tee test.log
+          npm test | tee test-${{ matrix.os }}-${{ matrix.node }}.log
       - name: Print context values
         run: |
           echo "Branch: ${{ github.ref }}"
@@ -45,18 +45,23 @@ jobs:
       - name: Upload test log
         uses: actions/upload-artifact@v4
         with:
-          name: test-log
-          path: test.log
+          name: test-log-${{ matrix.os }}-${{ matrix.node }}
+          path: test-${{ matrix.os }}-${{ matrix.node }}.log
 
   deploy:
     needs: test
     if: ${{ needs.test.outputs.result == 'success' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
+        runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [20, 22]
     steps:
       - name: Download test log
         uses: actions/download-artifact@v4
         with:
-          name: test-log
+          name: test-log-${{ matrix.os }}-${{ matrix.node }}
       - run: echo "Deploying to production"
 
 concurrency:
