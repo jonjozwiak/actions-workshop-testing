@@ -1,0 +1,64 @@
+name: Advanced Workflow Lab
+
+on: [push]
+
+env:
+  GLOBAL_ENV: "global"
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [20, 22]
+    env:
+      JOB_ENV: "job"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests and save log
+        run: |
+          npm test | tee test.log
+      - name: Print context values
+        run: |
+          echo "Branch: ${{ github.ref }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "OS: ${{ runner.os }}"
+          echo "Node version: ${{ matrix.node }}"
+          echo "Global env: $GLOBAL_ENV"
+          echo "Job env: $JOB_ENV"
+      - name: Dump entire github context
+        run: echo '${{ toJSON(github) }}'
+      - name: Save test result output
+        id: save
+        run: |
+          if grep -q "FAIL" test.log; then
+            echo "result=failure" >> $GITHUB_OUTPUT
+          else
+            echo "result=success" >> $GITHUB_OUTPUT
+          fi
+      - name: Upload test log
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-log
+          path: test.log
+
+  deploy:
+    needs: test
+    if: ${{ needs.test.outputs.result == 'success' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download test log
+        uses: actions/download-artifact@v4
+        with:
+          name: test-log
+      - run: echo "Deploying to production"
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
