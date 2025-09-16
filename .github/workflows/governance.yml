@@ -33,7 +33,7 @@ jobs:
       # Generate SBOM with CycloneDX
       - name: Install cyclonedx-node-npm and Generate SBOM
         run: | 
-          npm install -g @cyclonedx/cyclonedx-node-npm
+          npm install -g @cyclonedx/cyclonedx-npm
           cyclonedx-node-npm --output-format json --output-file sbom.json
 
       # Create a build artifact (zip the dist folder)
