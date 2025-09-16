@@ -49,7 +49,7 @@ jobs:
         with:
           format: 'cyclonedx-json'
           output-file: 'sbom.json'
-          paths: 'dist'
+          path: 'dist'
 
       # Generate artifact attestation for build provenance
       - name: Generate artifact attestation
