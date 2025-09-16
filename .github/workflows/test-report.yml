@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm ci
-      - run: npm test -- --json --outputFile=report.json || true
+      - run: npx vitest run --reporter=json --outputFile=report.json || true
 
       - uses: actions/upload-artifact@v4
         with:
