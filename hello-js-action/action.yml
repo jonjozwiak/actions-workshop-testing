@@ -1,9 +1,16 @@
-name: 'Hello JS Action'
-description: 'Greets the provided name'
+name: Hello JS Action
+description: Greet someone and record the time
+
 inputs:
-  name:
-    description: 'Name to greet'
+  who-to-greet: # id of input
+    description: Who to greet
     required: true
+    default: World
+
+outputs:
+  time: # id of output
+    description: The time we greeted you
+
 runs:
-  using: 'node20'
-  main: 'index.js'
+  using: node20
+  main: dist/index.js
