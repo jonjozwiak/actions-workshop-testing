@@ -1,0 +1,23 @@
+name: Test Report Lab
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test -- --json --outputFile=report.json || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: report.json
+          retention-days: 7
+
+      - name: Write summary
+        run: |
+          echo "### Test Report" >> $GITHUB_STEP_SUMMARY
+          echo "See attached artifact for full details" >> $GITHUB_STEP_SUMMARY
