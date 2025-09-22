@@ -94,7 +94,7 @@
             run: npm ci
     
           - name: Build application for GitHub Pages
-            run: npm run build -- --base=/${{ github.event.repository.name }}/
+            run: npm run build -- --base=/${{ github.event.repository.name }}/ --mode=development
     
           - name: Setup Pages
             uses: actions/configure-pages@v5
